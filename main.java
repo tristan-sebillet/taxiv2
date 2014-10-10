@@ -1,6 +1,7 @@
 package unpackage;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -12,45 +13,66 @@ public class main {
 
 	public static void main(String[] args) {
 
-		/*
-		double [][] dept = {{21, 2, 0.86, 1.72, 21.93, 1.29, 2.58, 21.93},
-							{25, 2.1, 0.83, 1.66, 22.5, 1.2, 2.4, 22.5},
-							{39, 2.1, 0.83, 1.66, 22.5, 1.23, 2.46, 25},
-							{44, 2.2, 0.79,	1.58, 24.19, 1.19, 2.37, 24.19},
-							{72, 2.15, 0.79, 1.58, 22.86, 1.19,	2.38, 22.86},
-							{73, 2.4, 0.84,	1.68, 25.4,	1.26, 2.52,	25.4},
-							{74, 3.15, 0.92, 1.84, 17.3, 1.38, 2.76, 17.3},
-							{75, 2.5, 1, 1.24, 0, 1.5, 1.5, 0},
-							{85, 2.3, 0.8, 1.6, 22.2, 1.2, 2.4,	22.2},
-							{90, 2.2, 0.83,1.66, 21, 1.15,	2.3, 21}};
-		*/
-
 		// crÃ©ation d'une liste
 		List<AR> maListeAR =  new ArrayList<AR>();
 		List<AS> maListeAS =  new ArrayList<AS>();
 
-		String monFichierTarif = ("/home/etudiant/workspace/projet1/src/unpackage/docTarif.txt");
 		try{
-    		//Ouverture d'un flux d'entrée à partir du fichier "docTarif.txt"
-        	BufferedReader monBuffer = new BufferedReader(new FileReader(monFichierTarif));
-        	String line = null;					//Variable qui contiendra chaque ligne du fichier
+    		Class.forName("org.postgresql.Driver");
+    	} catch (Exception e) {
+    		System.out.println("Where is your PostgreSQL JDBC Driver? "
+					+ "Include in your library path!");
+			e.printStackTrace();
+    	}//Fin catch
+		//Création d'un objet de type Connection
+    	Connection connect = null;
 
-        	//Tant qu'il reste une ligne au fichier
-        	while ((line = monBuffer.readLine()) != null)
-        	{
-        		//On découpe la ligne gràce au caractère ","
-        		String[] part = line.split(",");
-        		//On ajoute un objet de la classe Tarif à la brochure, à partir de la ligne du fichier découpée
-        		maListeAR.add(new AR(Integer.parseInt(part[0]),Double.parseDouble(part[1]),Double.parseDouble(part[4]),Double.parseDouble(part[7]),
-        							Double.parseDouble(part[2]),Double.parseDouble(part[5])));
-        		maListeAS.add(new AS(Integer.parseInt(part[0]),Double.parseDouble(part[1]),Double.parseDouble(part[5]),Double.parseDouble(part[7]),
-						Double.parseDouble(part[3]),Double.parseDouble(part[6])));
-        	}
-        	//Fermeture du buffer
-        	monBuffer.close();
-		} catch (Exception e) {
-		    System.out.println("Fichier contenant les tarifs introuvable !!!");
-		  }
+    	try{
+    		String url = "jdbc:postgresql://localhost:5432/tsebillet/taxi";
+    		connect = DriverManager.getConnection(url, "t.sebillet", "plopnoobnoob");
+    	}catch(Exception e){
+    		System.out.println("Une erreur est survenue lors de la connexion à la base de donnée");
+    	}
+
+		Statement maRequete = null;
+		try {
+			maRequete = connect.createStatement();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String texteRequete = "select * from calcul";
+		// définition de l'objet qui récupérera le résultat de l'exécution de la requête :
+
+		ResultSet curseurResultat = null;
+		try {
+			curseurResultat = maRequete.executeQuery(texteRequete);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// récupération des détails du résultats
+
+		try {
+			ResultSetMetaData detailsDonnees = curseurResultat.getMetaData();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			while(curseurResultat.next()){
+				maListeAR.add(new AR(curseurResultat.getInt("dept"), curseurResultat.getDouble("priseCharge"), curseurResultat.getDouble("tarifKMARJS"),
+						curseurResultat.getDouble("tarifHoraireJS"), curseurResultat.getDouble("tarifKMARND"), curseurResultat.getDouble("tarifHoraireND")));
+				maListeAS.add(new AS(curseurResultat.getInt("dept"), curseurResultat.getDouble("priseCharge"), curseurResultat.getDouble("tarifKMASJS"),
+						curseurResultat.getDouble("tarifHoraireJS"), curseurResultat.getDouble("tarifKMASND"), curseurResultat.getDouble("tarifHoraireND")));
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		int i;
 		/*

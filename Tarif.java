@@ -1,4 +1,10 @@
 package unpackage;
+/**
+ * Programme principal du projet remboursement taxi
+ *
+ * @author tristan-sebillet
+ * @version 2.0
+ */
 
 public class Tarif {
 
