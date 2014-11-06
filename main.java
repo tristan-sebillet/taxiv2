@@ -85,7 +85,7 @@ public class main {
 		}
 		*/
 
-*/code permettant de lire des données dans un fichier
+/*code permettant de lire des données dans un fichier
 	String monFichierTarif = ("/home/etudiant/workspace/taxiv2/src/unpackage/docTarif.txt");
 try{
 //Ouverture d'un flux d'entree à partir du fichier "docTarif.txt"
