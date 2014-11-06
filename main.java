@@ -75,7 +75,7 @@ public class main {
 		}
 
 		int i;
-		/*
+		/*code enlever pour la v3
 		// ajout d'Ã©lÃ©ments Ã  la liste
 		for (i=0;i<10;i++){
 			maListeAR.add(new AR((int)dept[i][0], dept[i][1], dept[i][4], dept[i][7],
@@ -85,6 +85,31 @@ public class main {
 		}
 		*/
 
+*/code permettant de lire des données dans un fichier
+	String monFichierTarif = ("/home/etudiant/workspace/taxiv2/src/unpackage/docTarif.txt");
+try{
+//Ouverture d'un flux d'entree à partir du fichier "docTarif.txt"
+//Pour la version Windows
+BufferedReader monBuffer = new BufferedReader(new FileReader(monFichierTarif));
+String line = null; //Variable qui contiendra chaque ligne du fichier
+//Tant qu'il reste une ligne au fichier
+while ((line = monBuffer.readLine()) != null)
+{
+//On découpe la ligne gràce au caractère ","
+String[] part = line.split(",");
+//On ajoute un objet de la classe Tarif à la brochure, à partir de la ligne du fichier découpée
+maListeAR.add(new AR(Integer.parseInt(part[0]),Double.parseDouble(part[1]),Double.parseDouble(part[4]),Double.parseDouble(part[7]),
+Double.parseDouble(part[2]),Double.parseDouble(part[5])));
+maListeAS.add(new AS(Integer.parseInt(part[0]),Double.parseDouble(part[1]),Double.parseDouble(part[5]),Double.parseDouble(part[7]),
+Double.parseDouble(part[3]),Double.parseDouble(part[6])));
+}
+//Fermeture du buffer
+monBuffer.close();
+} catch (Exception e) {
+System.out.println("Fichier contenant les tarifs introuvable !!!");
+System.exit(0);
+}
+*/
 		Saisie maSaisie = new Saisie();
 
 		boolean saisieOK = false;
